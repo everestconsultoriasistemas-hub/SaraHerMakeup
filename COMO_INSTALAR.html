@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Como Instalar - Sara Her Makeup</title>
+<style>
+  :root { --pink:#e91e8c; --pink-light:#ff6bb5; --pink-pale:#fce4ec; --dark:#2d1b2e; --gray:#6b7280; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Segoe UI',sans-serif; background:#f9f0f5; color:var(--dark); }
+  header { background:linear-gradient(135deg,var(--pink),var(--pink-light)); padding:32px 24px; text-align:center; color:white; }
+  header h1 { font-size:28px; margin-bottom:8px; }
+  header p { opacity:.9; font-size:15px; }
+  .container { max-width:800px; margin:0 auto; padding:32px 20px; }
+  .step { background:white; border-radius:16px; padding:28px; margin-bottom:24px; box-shadow:0 4px 20px rgba(233,30,140,0.08); border-left:4px solid var(--pink); }
+  .step-num { display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px; background:var(--pink); color:white; border-radius:50%; font-weight:800; font-size:16px; margin-bottom:16px; }
+  .step h2 { font-size:18px; color:var(--dark); margin-bottom:12px; }
+  .step p { color:var(--gray); font-size:14px; line-height:1.7; margin-bottom:12px; }
+  .step p:last-child { margin-bottom:0; }
+  .step strong { color:var(--dark); }
+  .img-placeholder { background:var(--pink-pale); border:2px dashed var(--pink-light); border-radius:10px; padding:20px; text-align:center; color:var(--pink); font-size:13px; margin:12px 0; }
+  .code { background:#1e1e2e; color:#cdd6f4; border-radius:10px; padding:16px 20px; font-family:monospace; font-size:13px; margin:12px 0; overflow-x:auto; line-height:1.6; }
+  .code .comment { color:#6c7086; }
+  .code .key { color:#89b4fa; }
+  .code .val { color:#a6e3a1; }
+  .tip { background:#f0fdf4; border:1px solid #86efac; border-radius:10px; padding:14px 16px; font-size:13px; color:#166534; margin:12px 0; }
+  .warn { background:#fffbeb; border:1px solid #fcd34d; border-radius:10px; padding:14px 16px; font-size:13px; color:#92400e; margin:12px 0; }
+  .btn-link { display:inline-block; background:var(--pink); color:white; padding:12px 24px; border-radius:10px; text-decoration:none; font-weight:700; font-size:14px; margin:8px 4px; transition:.2s; }
+  .btn-link:hover { background:var(--pink-light); }
+  .btn-link.secondary { background:white; color:var(--pink); border:2px solid var(--pink); }
+  .checklist { list-style:none; }
+  .checklist li { padding:8px 0; border-bottom:1px solid #fdf0f6; font-size:14px; display:flex; align-items:center; gap:10px; }
+  .checklist li::before { content:'☐'; font-size:18px; color:var(--pink); }
+  .checklist li.done::before { content:'✅'; }
+  .field-table { width:100%; border-collapse:collapse; margin:12px 0; }
+  .field-table th { background:var(--pink-pale); color:var(--pink); padding:10px 14px; text-align:left; font-size:13px; }
+  .field-table td { padding:10px 14px; border-bottom:1px solid #fdf0f6; font-size:13px; }
+  .field-table tr:last-child td { border-bottom:none; }
+  .tag { display:inline-block; background:var(--pink-pale); color:var(--pink); padding:2px 8px; border-radius:6px; font-size:12px; font-weight:600; }
+  footer { background:var(--dark); color:rgba(255,255,255,0.7); text-align:center; padding:24px; font-size:13px; margin-top:40px; }
+  footer strong { color:var(--pink-light); }
+  .progress { display:flex; gap:8px; margin-bottom:32px; flex-wrap:wrap; }
+  .progress-item { flex:1; min-width:100px; background:white; border-radius:10px; padding:12px; text-align:center; box-shadow:0 2px 8px rgba(233,30,140,0.08); border-top:3px solid #e5e7eb; }
+  .progress-item.done { border-top-color:var(--pink); }
+  .progress-item .num { font-size:20px; font-weight:800; color:var(--pink); }
+  .progress-item .label { font-size:11px; color:var(--gray); margin-top:4px; }
+</style>
+</head>
+<body>
+<header>
+<h1>💄 Sara Her Makeup</h1>
+<p>Guia completo de instalação — Siga os passos abaixo!</p>
+</header>
+<div class="container">
+<div class="progress">
+<div class="progress-item done"><div class="num">1</div><div class="label">Criar conta Firebase</div></div>
+<div class="progress-item"><div class="num">2</div><div class="label">Criar projeto</div></div>
+<div class="progress-item"><div class="num">3</div><div class="label">Configurar banco</div></div>
+<div class="progress-item"><div class="num">4</div><div class="label">Criar login admin</div></div>
+<div class="progress-item"><div class="num">5</div><div class="label">Publicar online</div></div>
+</div>
+<!-- PASSO 1 -->
+<div class="step">
+<div class="step-num">1</div>
+<h2>Criar conta no Firebase (Google) — Gratuito</h2>
+<p>O Firebase é um serviço do Google que vai guardar todos os dados da loja com segurança. É <strong>100% gratuito</strong> para o tamanho da sua loja.</p>
+<div class="tip">✅ Você já tem conta no Google? Então já tem acesso ao Firebase!</div>
+<a class="btn-link" href="https://console.firebase.google.com" target="_blank">🔗 Abrir Firebase Console</a>
+<p style="margin-top:12px;">Clique no link acima e faça login com a conta Google da Sara.</p>
+</div>
+<!-- PASSO 2 -->
+<div class="step">
+<div class="step-num">2</div>
+<h2>Criar um novo projeto Firebase</h2>
+<p>Dentro do Firebase Console:</p>
+<ul style="margin:12px 0 12px 20px;color:var(--gray);font-size:14px;line-height:2;">
+<li>Clique em <strong>"Adicionar projeto"</strong> (ou "Create a project")</li>
+<li>Nome do projeto: <strong>sara-her-makeup</strong></li>
+<li>Desative o Google Analytics (não precisa)</li>
+<li>Clique em <strong>"Criar projeto"</strong></li>
+<li>Aguarde criar e clique em <strong>"Continuar"</strong></li>
+</ul>
+<div class="img-placeholder">📸 Você verá a tela principal do projeto com o nome "sara-her-makeup"</div>
+</div>
+<!-- PASSO 3 -->
+<div class="step">
+<div class="step-num">3</div>
+<h2>Configurar o Banco de Dados (Firestore)</h2>
+<p>O Firestore é onde todos os produtos, pedidos e dados financeiros ficam salvos na nuvem.</p>
+<ul style="margin:12px 0 12px 20px;color:var(--gray);font-size:14px;line-height:2;">
+<li>No menu lateral esquerdo, clique em <strong>"Firestore Database"</strong></li>
+<li>Clique em <strong>"Criar banco de dados"</strong></li>
+<li>Selecione <strong>"Iniciar no modo de produção"</strong></li>
+<li>Escolha a localização: <strong>southamerica-east1 (São Paulo)</strong></li>
+<li>Clique em <strong>"Ativar"</strong></li>
+</ul>
+<div class="warn">⚠️ Após criar, precisamos configurar as regras de segurança. Veja abaixo:</div>
+<p><strong>Configurar Regras de Segurança:</strong></p>
+<p>Clique na aba <strong>"Regras"</strong> dentro do Firestore e cole o código abaixo:</p>
+<div class="code">
+rules_version = '2';<br/>
+service cloud.firestore {<br/>
+  match /databases/{database}/documents {<br/>
+    <span class="comment">// Produtos: qualquer um pode ler, só admin escreve</span><br/>
+    match /produtos/{id} {<br/>
+      allow read: if true;<br/>
+      allow write: if request.auth != null;<br/>
+    }<br/>
+    <span class="comment">// Pedidos: qualquer um pode criar, só admin lê/edita</span><br/>
+    match /pedidos/{id} {<br/>
+      allow create: if true;<br/>
+      allow read, update, delete: if request.auth != null;<br/>
+    }<br/>
+    <span class="comment">// Caixa e Config: só admin</span><br/>
+    match /caixa/{id} {<br/>
+      allow read, write: if request.auth != null;<br/>
+    }<br/>
+    match /config/{id} {<br/>
+      allow read: if true;<br/>
+      allow write: if request.auth != null;<br/>
+    }<br/>
+  }<br/>
+}
+    </div>
+<p>Clique em <strong>"Publicar"</strong> para salvar as regras.</p>
+</div>
+<!-- PASSO 4 -->
+<div class="step">
+<div class="step-num">4</div>
+<h2>Criar o login do Admin (Authentication)</h2>
+<p>Vamos criar o e-mail e senha que a Sara vai usar para entrar no painel administrativo.</p>
+<ul style="margin:12px 0 12px 20px;color:var(--gray);font-size:14px;line-height:2;">
+<li>No menu lateral, clique em <strong>"Authentication"</strong></li>
+<li>Clique em <strong>"Começar"</strong></li>
+<li>Clique em <strong>"E-mail/senha"</strong> e ative a opção</li>
+<li>Clique em <strong>"Salvar"</strong></li>
+<li>Vá na aba <strong>"Usuários"</strong></li>
+<li>Clique em <strong>"Adicionar usuário"</strong></li>
+<li>E-mail: <strong>o e-mail da Sara</strong></li>
+<li>Senha: <strong>escolha uma senha segura</strong></li>
+<li>Clique em <strong>"Adicionar usuário"</strong></li>
+</ul>
+<div class="tip">✅ Guarde bem o e-mail e senha! Eles serão usados para entrar no painel admin.</div>
+</div>
+<!-- PASSO 5 -->
+<div class="step">
+<div class="step-num">5</div>
+<h2>Obter as credenciais do Firebase</h2>
+<p>Agora vamos pegar as informações que o sistema precisa para se conectar ao Firebase.</p>
+<ul style="margin:12px 0 12px 20px;color:var(--gray);font-size:14px;line-height:2;">
+<li>No menu lateral, clique em <strong>"Configurações do projeto"</strong> (ícone de engrenagem ⚙️)</li>
+<li>Role a página até <strong>"Seus aplicativos"</strong></li>
+<li>Clique no ícone <strong>&lt;/&gt;</strong> (Web)</li>
+<li>Nome do app: <strong>sara-makeup-web</strong></li>
+<li>Clique em <strong>"Registrar app"</strong></li>
+<li>Você verá um código como este:</li>
+</ul>
+<div class="code">
+const firebaseConfig = {<br/>
+  <span class="key">apiKey</span>: <span class="val">"AIzaSyXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"</span>,<br/>
+  <span class="key">authDomain</span>: <span class="val">"sara-her-makeup.firebaseapp.com"</span>,<br/>
+  <span class="key">projectId</span>: <span class="val">"sara-her-makeup"</span>,<br/>
+  <span class="key">storageBucket</span>: <span class="val">"sara-her-makeup.appspot.com"</span>,<br/>
+  <span class="key">messagingSenderId</span>: <span class="val">"123456789012"</span>,<br/>
+  <span class="key">appId</span>: <span class="val">"1:123456789012:web:abcdef123456"</span><br/>
+};
+    </div>
+<p>Copie cada valor e cole na tela de configuração do <strong>admin.html</strong>:</p>
+<table class="field-table">
+<thead><tr><th>Campo no sistema</th><th>Onde encontrar no Firebase</th></tr></thead>
+<tbody>
+<tr><td><span class="tag">API Key</span></td><td>Valor de <strong>apiKey</strong></td></tr>
+<tr><td><span class="tag">Auth Domain</span></td><td>Valor de <strong>authDomain</strong></td></tr>
+<tr><td><span class="tag">Project ID</span></td><td>Valor de <strong>projectId</strong></td></tr>
+<tr><td><span class="tag">Storage Bucket</span></td><td>Valor de <strong>storageBucket</strong></td></tr>
+<tr><td><span class="tag">Messaging Sender ID</span></td><td>Valor de <strong>messagingSenderId</strong></td></tr>
+<tr><td><span class="tag">App ID</span></td><td>Valor de <strong>appId</strong></td></tr>
+</tbody>
+</table>
+</div>
+<!-- PASSO 6 -->
+<div class="step">
+<div class="step-num">6</div>
+<h2>Publicar o sistema online (Netlify) — Gratuito</h2>
+<p>Para que as clientes acessem pelo celular e os dados fiquem sempre disponíveis, vamos publicar o sistema online gratuitamente.</p>
+<ul style="margin:12px 0 12px 20px;color:var(--gray);font-size:14px;line-height:2;">
+<li>Acesse <a href="https://netlify.com" style="color:var(--pink);" target="_blank">netlify.com</a> e crie uma conta gratuita</li>
+<li>Clique em <strong>"Add new site"</strong> → <strong>"Deploy manually"</strong></li>
+<li>Arraste a pasta <strong>sara_makeup</strong> para a área indicada</li>
+<li>Aguarde o upload (alguns segundos)</li>
+<li>Você receberá um link como: <strong>sara-makeup.netlify.app</strong></li>
+</ul>
+<div class="tip">✅ Pronto! Esse link é o endereço da loja. Envie para as clientes!</div>
+<div class="warn">⚠️ Lembre-se: após publicar no Netlify, abra o <strong>admin.html</strong> pelo link do Netlify (não pelo arquivo local) para que o Firebase funcione corretamente.</div>
+<a class="btn-link" href="https://netlify.com" target="_blank">🌐 Acessar Netlify</a>
+</div>
+<!-- PASSO 7 -->
+<div class="step">
+<div class="step-num">7</div>
+<h2>✅ Checklist Final</h2>
+<p>Verifique se tudo está funcionando:</p>
+<ul class="checklist">
+<li>Conta Firebase criada com e-mail do Google</li>
+<li>Projeto "sara-her-makeup" criado no Firebase</li>
+<li>Firestore Database ativado (modo produção)</li>
+<li>Regras de segurança configuradas e publicadas</li>
+<li>Authentication ativado com e-mail/senha</li>
+<li>Usuário admin criado (e-mail + senha)</li>
+<li>Credenciais copiadas para o admin.html</li>
+<li>Sistema publicado no Netlify</li>
+<li>Conseguiu fazer login no painel admin</li>
+<li>Cadastrou pelo menos 1 produto de teste</li>
+<li>Testou o catálogo pelo celular</li>
+<li>Testou finalizar pedido pelo WhatsApp</li>
+</ul>
+</div>
+<!-- DÚVIDAS -->
+<div class="step" style="border-left-color:#10b981;">
+<div class="step-num" style="background:#10b981;">?</div>
+<h2>Dúvidas Frequentes</h2>
+<p><strong>❓ Preciso pagar alguma coisa?</strong><br/>
+    Não! O Firebase tem um plano gratuito (Spark) que suporta até 50.000 leituras e 20.000 escritas por dia — mais do que suficiente para uma loja pequena. O Netlify também é gratuito.</p>
+<br/>
+<p><strong>❓ Os dados ficam seguros?</strong><br/>
+    Sim! Os dados ficam nos servidores do Google, com backup automático. Você nunca vai perder nada.</p>
+<br/>
+<p><strong>❓ Posso acessar de qualquer celular?</strong><br/>
+    Sim! Tanto o painel admin quanto o catálogo das clientes funcionam em qualquer celular, tablet ou computador com internet.</p>
+<br/>
+<p><strong>❓ As clientes precisam criar conta?</strong><br/>
+    Não! As clientes acessam o catálogo sem precisar criar conta. Só preenchem nome e WhatsApp na hora de finalizar o pedido.</p>
+<br/>
+<p><strong>❓ Como compartilhar o link da loja?</strong><br/>
+    Após publicar no Netlify, você terá um link como <strong>sara-makeup.netlify.app</strong>. Envie esse link pelo WhatsApp, Instagram, etc.</p>
+</div>
+</div>
+<footer>
+<p>💄 <strong>Sara Her Makeup</strong> — Sistema desenvolvido com carinho</p>
+<p style="margin-top:4px;">Qualquer dúvida, siga o guia passo a passo acima ✅</p>
+</footer>
+</body>
+</html>
