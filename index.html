@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sara Her Makeup</title>
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<style>
+  :root {
+    --pink:#e91e8c; --pink-light:#ff6bb5; --pink-pale:#fce4ec;
+    --dark:#2d1b2e; --gray:#6b7280; --light:#fdf5f9; --white:#fff;
+    --green:#10b981; --shadow:0 4px 20px rgba(233,30,140,0.12);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Segoe UI',sans-serif;background:var(--light);color:var(--dark);}
+
+  /* LOADING */
+  #loadingScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;background:var(--light);}
+  .spinner{width:40px;height:40px;border:4px solid #f0e0ea;border-top-color:var(--pink);border-radius:50%;animation:spin .8s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  /* HEADER */
+  header{background:linear-gradient(135deg,var(--pink),var(--pink-light));position:sticky;top:0;z-index:100;box-shadow:0 4px 20px rgba(233,30,140,0.3);}
+  .header-top{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;}
+  .logo-area{display:flex;align-items:center;gap:12px;}
+  .logo-area img{width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,0.5);}
+  .logo-emoji{font-size:32px;}
+  .logo-area h1{color:white;font-size:20px;font-weight:800;}
+  .logo-area p{color:rgba(255,255,255,0.85);font-size:12px;}
+  .cart-btn{background:white;border:none;border-radius:50px;padding:10px 20px;display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:700;color:var(--pink);font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,0.15);transition:.2s;position:relative;}
+  .cart-btn:hover{transform:scale(1.05);}
+  .cart-count{position:absolute;top:-6px;right:-6px;background:var(--dark);color:white;border-radius:50%;width:20px;height:20px;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;}
+
+  /* BANNER */
+  .banner{background:linear-gradient(135deg,rgba(233,30,140,0.9),rgba(255,107,181,0.8));padding:32px 24px;text-align:center;color:white;}
+  .banner h2{font-size:28px;font-weight:800;margin-bottom:8px;}
+  .banner p{font-size:15px;opacity:.9;}
+
+  /* SEARCH */
+  .search-section{background:white;padding:20px 24px;box-shadow:0 2px 8px rgba(0,0,0,0.06);}
+  .search-wrap{max-width:600px;margin:0 auto;}
+  .search-input-wrap{position:relative;margin-bottom:16px;}
+  .search-input-wrap input{width:100%;padding:14px 20px 14px 48px;border:2px solid #f0e0ea;border-radius:50px;font-size:15px;outline:none;transition:.2s;}
+  .search-input-wrap input:focus{border-color:var(--pink);}
+  .search-icon{position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:20px;}
+  .cats{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;}
+  .cat-btn{padding:8px 18px;border-radius:50px;border:2px solid #f0e0ea;background:white;cursor:pointer;font-size:13px;font-weight:600;color:var(--gray);transition:.2s;}
+  .cat-btn:hover,.cat-btn.active{background:var(--pink);color:white;border-color:var(--pink);}
+
+  /* PRODUTOS */
+  .produtos-section{max-width:1200px;margin:0 auto;padding:32px 20px;}
+  .section-title{font-size:20px;font-weight:800;margin-bottom:20px;}
+  .produtos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:20px;}
+  .produto-card{background:white;border-radius:20px;overflow:hidden;box-shadow:var(--shadow);transition:.3s;cursor:pointer;border:2px solid transparent;}
+  .produto-card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(233,30,140,0.2);border-color:var(--pink-light);}
+  .img-wrap{position:relative;overflow:hidden;}
+  .produto-card img{width:100%;height:200px;object-fit:cover;transition:.3s;}
+  .produto-card:hover img{transform:scale(1.05);}
+  .badge-sem-estoque{position:absolute;top:12px;right:12px;background:rgba(239,68,68,0.9);color:white;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;}
+  .badge-cat{position:absolute;top:12px;left:12px;background:rgba(233,30,140,0.9);color:white;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;}
+  .produto-card-body{padding:16px;}
+  .produto-card-body h3{font-size:15px;font-weight:700;margin-bottom:6px;line-height:1.3;}
+  .produto-desc{font-size:13px;color:var(--gray);margin-bottom:12px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  .produto-card-footer{display:flex;align-items:center;justify-content:space-between;}
+  .preco{font-size:22px;font-weight:800;color:var(--pink);}
+  .add-btn{background:var(--pink);color:white;border:none;border-radius:50px;padding:10px 18px;font-size:13px;font-weight:700;cursor:pointer;transition:.2s;display:flex;align-items:center;gap:6px;}
+  .add-btn:hover{background:var(--pink-light);transform:scale(1.05);}
+  .add-btn:disabled{background:#ccc;cursor:not-allowed;transform:none;}
+
+  /* CARRINHO */
+  .cart-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;display:none;}
+  .cart-overlay.open{display:block;}
+  .cart-panel{position:fixed;right:0;top:0;bottom:0;width:400px;max-width:100vw;background:white;z-index:201;display:flex;flex-direction:column;transform:translateX(100%);transition:.3s;box-shadow:-8px 0 40px rgba(0,0,0,0.15);}
+  .cart-panel.open{transform:translateX(0);}
+  .cart-header{padding:20px 24px;background:linear-gradient(135deg,var(--pink),var(--pink-light));color:white;display:flex;align-items:center;justify-content:space-between;}
+  .cart-header h2{font-size:18px;}
+  .cart-close{background:none;border:none;color:white;font-size:24px;cursor:pointer;}
+  .cart-items{flex:1;overflow-y:auto;padding:16px;}
+  .cart-item{display:flex;gap:12px;padding:14px 0;border-bottom:1px solid #fdf0f6;align-items:center;}
+  .cart-item img{width:60px;height:60px;object-fit:cover;border-radius:10px;flex-shrink:0;}
+  .cart-item-info{flex:1;}
+  .cart-item-info h4{font-size:14px;margin-bottom:4px;}
+  .cart-item-info .item-preco{font-size:15px;color:var(--pink);font-weight:700;}
+  .cart-item-qtd{display:flex;align-items:center;gap:8px;margin-top:6px;}
+  .qtd-btn{background:var(--pink-pale);border:none;border-radius:50%;width:26px;height:26px;cursor:pointer;font-size:16px;font-weight:700;color:var(--pink);display:flex;align-items:center;justify-content:center;}
+  .qtd-num{font-size:15px;font-weight:700;min-width:24px;text-align:center;}
+  .cart-item-remove{background:none;border:none;color:#ccc;cursor:pointer;font-size:18px;padding:4px;}
+  .cart-item-remove:hover{color:var(--pink);}
+  .cart-empty{text-align:center;padding:60px 20px;color:var(--gray);}
+  .cart-empty .icon{font-size:48px;margin-bottom:16px;}
+  .cart-footer{padding:20px 24px;border-top:2px solid #fce4ec;}
+  .cart-total{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
+  .cart-total span{font-size:16px;color:var(--gray);}
+  .cart-total strong{font-size:24px;color:var(--pink);}
+  .form-pedido label{font-size:13px;font-weight:600;color:var(--dark);display:block;margin-bottom:4px;}
+  .form-pedido input,.form-pedido select,.form-pedido textarea{width:100%;padding:12px 14px;border:2px solid #f0e0ea;border-radius:12px;font-size:14px;outline:none;margin-bottom:10px;font-family:inherit;transition:.2s;}
+  .form-pedido input:focus,.form-pedido select:focus,.form-pedido textarea:focus{border-color:var(--pink);}
+  .whats-btn{width:100%;padding:16px;background:#25d366;color:white;border:none;border-radius:14px;font-size:16px;font-weight:800;cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;gap:10px;}
+  .whats-btn:hover{background:#1da851;transform:translateY(-1px);}
+
+  /* MODAL */
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:300;display:none;align-items:center;justify-content:center;padding:20px;}
+  .modal-overlay.open{display:flex;}
+  .modal{background:white;border-radius:24px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto;position:relative;}
+  .modal-img{width:100%;height:260px;object-fit:cover;}
+  .modal-body{padding:24px;}
+  .modal-cat{color:var(--pink);font-size:13px;font-weight:700;margin-bottom:8px;}
+  .modal-body h2{font-size:22px;margin-bottom:10px;}
+  .modal-desc{color:var(--gray);font-size:14px;line-height:1.6;margin-bottom:16px;}
+  .modal-preco{font-size:32px;font-weight:800;color:var(--pink);margin-bottom:20px;}
+  .modal-close-btn{position:absolute;top:16px;right:16px;background:white;border:none;border-radius:50%;width:36px;height:36px;font-size:18px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.2);z-index:1;}
+
+  /* TOAST */
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--dark);color:white;padding:14px 24px;border-radius:50px;font-size:14px;font-weight:600;z-index:500;transition:.3s;white-space:nowrap;}
+  .toast.show{transform:translateX(-50%) translateY(0);}
+  .toast.success{background:var(--green);}
+
+  footer{background:var(--dark);color:rgba(255,255,255,0.7);text-align:center;padding:24px;font-size:13px;margin-top:40px;}
+  footer strong{color:var(--pink-light);}
+  .empty-state{text-align:center;padding:60px 20px;color:var(--gray);grid-column:1/-1;}
+  .empty-state .icon{font-size:48px;margin-bottom:16px;}
+
+  @media(max-width:600px){
+    .cart-panel{width:100vw;}
+    .produtos-grid{grid-template-columns:repeat(2,1fr);gap:12px;}
+    .produto-card img{height:150px;}
+    .banner h2{font-size:20px;}
+  }
+  @media(max-width:380px){.produtos-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<!-- LOADING -->
+<div id="loadingScreen">
+<div class="spinner"></div>
+<p style="color:var(--gray);">Carregando produtos...</p>
+</div>
+<!-- LOJA -->
+<div id="lojaContent" style="display:none;">
+<header>
+<div class="header-top">
+<div class="logo-area">
+<div id="logoArea"><span class="logo-emoji">💄</span></div>
+<div>
+<h1 id="nomeLojaHeader">Sara Her Makeup</h1>
+<p>✨ Beleza &amp; Maquiagem</p>
+</div>
+</div>
+<button class="cart-btn" onclick="toggleCart()">
+        🛒 Carrinho
+        <span class="cart-count" id="cartCount">0</span>
+</button>
+</div>
+</header>
+<div class="banner">
+<h2>✨ Produtos Selecionados para Você</h2>
+<p>Escolha seus favoritos e finalize pelo WhatsApp! 💄</p>
+</div>
+<div class="search-section">
+<div class="search-wrap">
+<div class="search-input-wrap">
+<span class="search-icon">🔍</span>
+<input id="searchInput" oninput="renderProdutos()" placeholder="Buscar produto..." type="text"/>
+</div>
+<div class="cats" id="catsFilter"></div>
+</div>
+</div>
+<div class="produtos-section">
+<div class="section-title" id="sectionTitle">🛍️ Todos os Produtos</div>
+<div class="produtos-grid" id="produtosGrid"></div>
+</div>
+<footer>
+<p>💄 <strong>Sara Her Makeup</strong></p>
+<p style="margin-top:4px;">Finalize seu pedido pelo WhatsApp com segurança ✅</p>
+</footer>
+</div>
+<!-- CARRINHO -->
+<div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+<div class="cart-panel" id="cartPanel">
+<div class="cart-header">
+<h2>🛒 Meu Carrinho</h2>
+<button class="cart-close" onclick="toggleCart()">✕</button>
+</div>
+<div class="cart-items" id="cartItems">
+<div class="cart-empty"><div class="icon">🛒</div><p>Seu carrinho está vazio</p></div>
+</div>
+<div class="cart-footer">
+<div class="cart-total">
+<span>Total:</span>
+<strong id="cartTotal">R$ 0,00</strong>
+</div>
+<div class="form-pedido">
+<label>Seu Nome *</label>
+<input id="clienteNome" placeholder="Como podemos te chamar?" type="text"/>
+<label>Seu WhatsApp *</label>
+<input id="clienteTel" placeholder="(27) 99999-9999" type="tel"/>
+<label>Forma de Pagamento</label>
+<select id="formaPag">
+<option value="pix">💸 PIX</option>
+<option value="cartao">💳 Cartão</option>
+<option value="dinheiro">💵 Dinheiro</option>
+<option value="a_combinar">🤝 A combinar</option>
+</select>
+<label>Observações (opcional)</label>
+<textarea id="obsCliente" placeholder="Endereço para entrega, dúvidas..." rows="2"></textarea>
+</div>
+<button class="whats-btn" onclick="finalizarPedido()">
+<svg fill="white" height="22" viewbox="0 0 24 24" width="22"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"></path></svg>
+      Finalizar pelo WhatsApp
+    </button>
+</div>
+</div>
+<!-- MODAL PRODUTO -->
+<div class="modal-overlay" id="modalProduto">
+<div class="modal">
+<button class="modal-close-btn" onclick="fecharModal()">✕</button>
+<img alt="" class="modal-img" id="modalImg" onerror="this.src='https://via.placeholder.com/500x260/fce4ec/e91e8c?text=Produto'" src=""/>
+<div class="modal-body">
+<div class="modal-cat" id="modalCat"></div>
+<h2 id="modalNome"></h2>
+<div class="modal-desc" id="modalDesc"></div>
+<div class="modal-preco" id="modalPreco"></div>
+<button class="add-btn" id="modalAddBtn" onclick="addFromModal()" style="width:100%;justify-content:center;padding:14px;font-size:15px;">
+        🛒 Adicionar ao Carrinho
+      </button>
+</div>
+</div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+// ============================================================
+// FIREBASE CONFIG - Sara Her Makeup
+// ============================================================
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyCSGSZmVxW4b09jBHUzbfTB52EUGtDRfM4",
+  authDomain: "sara-her-makeup.firebaseapp.com",
+  projectId: "sara-her-makeup",
+  storageBucket: "sara-her-makeup.firebasestorage.app",
+  messagingSenderId: "1071934776127",
+  appId: "1:1071934776127:web:209177db9079e16da4a98a"
+};
+
+let db;
+let carrinho = [];
+let produtoModal = null;
+let catAtiva = '';
+let todosOsProdutos = [];
+let configLoja = null;
+
+// ============================================================
+// UTILS
+// ============================================================
+const fmt = v => 'R$ ' + Number(v||0).toFixed(2).replace('.',',').replace(/\B(?=(\d{3})+(?!\d))/g,'.');
+function toast(msg, type='') {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.className = 'toast show ' + type;
+  setTimeout(() => el.classList.remove('show'), 2500);
+}
+function fecharModal() {
+  document.getElementById('modalProduto').classList.remove('open');
+  produtoModal = null;
+}
+
+// ============================================================
+// INIT
+// ============================================================
+window.addEventListener('DOMContentLoaded', async () => {
+  try {
+    firebase.initializeApp(FIREBASE_CONFIG);
+    db = firebase.firestore();
+    await carregarLoja();
+  } catch(e) {
+    console.error('Erro Firebase:', e);
+    document.getElementById('loadingScreen').innerHTML = '<p style="color:#e91e8c;padding:20px;text-align:center;">Erro ao carregar. Tente novamente.</p>';
+  }
+});
+
+async function carregarLoja() {
+  try {
+    // Carregar config
+    try {
+      const doc = await db.collection('config').doc('loja').get();
+      configLoja = doc.exists ? doc.data() : { nomeLoja:'Sara Her Makeup', whatsapp:'5527995030142', corPrimaria:'#e91e8c', mensagemPedido:'Olá Sara! Gostaria de fazer um pedido:' };
+    } catch(e) {
+      configLoja = { nomeLoja:'Sara Her Makeup', whatsapp:'5527995030142', corPrimaria:'#e91e8c', mensagemPedido:'Olá Sara! Gostaria de fazer um pedido:' };
+    }
+
+    // Carregar produtos
+    const snap = await db.collection('produtos').get();
+    todosOsProdutos = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(p => p.ativo);
+
+    // Aplicar visual
+    document.title = configLoja.nomeLoja || 'Sara Her Makeup';
+    document.getElementById('nomeLojaHeader').textContent = configLoja.nomeLoja || 'Sara Her Makeup';
+    if (configLoja.corPrimaria) document.documentElement.style.setProperty('--pink', configLoja.corPrimaria);
+    if (configLoja.logo) document.getElementById('logoArea').innerHTML = `<img src="${configLoja.logo}" alt="Logo">`;
+
+    document.getElementById('loadingScreen').style.display = 'none';
+    document.getElementById('lojaContent').style.display = 'block';
+    renderCats();
+    renderProdutos();
+  } catch(e) {
+    console.error('Erro ao carregar loja:', e);
+    document.getElementById('loadingScreen').innerHTML = '<p style="color:#e91e8c;padding:20px;text-align:center;">Erro ao carregar produtos. Tente novamente.</p>';
+  }
+}
+
+// ============================================================
+// CATEGORIAS
+// ============================================================
+function renderCats() {
+  const cats = [...new Set(todosOsProdutos.map(p => p.categoria))];
+  document.getElementById('catsFilter').innerHTML =
+    `<button class="cat-btn active" onclick="filtrarCat(this,'')">Todos</button>` +
+    cats.map(c => `<button class="cat-btn" onclick="filtrarCat(this,'${c}')">${c}</button>`).join('');
+}
+
+function filtrarCat(el, cat) {
+  catAtiva = cat;
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  renderProdutos();
+}
+
+// ============================================================
+// PRODUTOS
+// ============================================================
+function renderProdutos() {
+  const search = (document.getElementById('searchInput')?.value||'').toLowerCase();
+  let lista = todosOsProdutos;
+  if (catAtiva) lista = lista.filter(p => p.categoria === catAtiva);
+  if (search) lista = lista.filter(p =>
+    p.nome.toLowerCase().includes(search) ||
+    (p.descricao||'').toLowerCase().includes(search) ||
+    p.categoria.toLowerCase().includes(search)
+  );
+  const titulo = catAtiva ? `✨ ${catAtiva}` : search ? `🔍 "${search}"` : '🛍️ Todos os Produtos';
+  document.getElementById('sectionTitle').textContent = `${titulo} (${lista.length})`;
+  const grid = document.getElementById('produtosGrid');
+  if (!lista.length) { grid.innerHTML = `<div class="empty-state"><div class="icon">🔍</div><p>Nenhum produto encontrado</p></div>`; return; }
+  grid.innerHTML = lista.map(p => `
+    <div class="produto-card" onclick="abrirModal('${p.id}')">
+      <div class="img-wrap">
+        <img src="${p.imagem||'https://via.placeholder.com/400x200/fce4ec/e91e8c?text=Produto'}" alt="${p.nome}" onerror="this.src='https://via.placeholder.com/400x200/fce4ec/e91e8c?text=Produto'">
+        <span class="badge-cat">${p.categoria}</span>
+        ${p.estoque<=0?'<span class="badge-sem-estoque">Esgotado</span>':''}
+      </div>
+      <div class="produto-card-body">
+        <h3>${p.nome}</h3>
+        <div class="produto-desc">${p.descricao||'Produto de qualidade para realçar sua beleza.'}</div>
+        <div class="produto-card-footer">
+          <div class="preco">${fmt(p.preco)}</div>
+          <button class="add-btn" onclick="event.stopPropagation();addToCart('${p.id}')" ${p.estoque<=0?'disabled':''}>
+            ${p.estoque<=0?'Esgotado':'🛒 Adicionar'}
+          </button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+// ============================================================
+// MODAL
+// ============================================================
+function abrirModal(id) {
+  const p = todosOsProdutos.find(x => x.id === id);
+  if (!p) return;
+  produtoModal = p;
+  document.getElementById('modalImg').src = p.imagem||'https://via.placeholder.com/500x260/fce4ec/e91e8c?text=Produto';
+  document.getElementById('modalCat').textContent = '💄 ' + p.categoria;
+  document.getElementById('modalNome').textContent = p.nome;
+  document.getElementById('modalDesc').textContent = p.descricao||'Produto de qualidade para realçar sua beleza.';
+  document.getElementById('modalPreco').textContent = fmt(p.preco);
+  const btn = document.getElementById('modalAddBtn');
+  btn.disabled = p.estoque <= 0;
+  btn.textContent = p.estoque <= 0 ? '😔 Produto Esgotado' : '🛒 Adicionar ao Carrinho';
+  document.getElementById('modalProduto').classList.add('open');
+}
+function addFromModal() { if (produtoModal) { addToCart(produtoModal.id); fecharModal(); } }
+
+// ============================================================
+// CARRINHO
+// ============================================================
+function addToCart(id) {
+  const p = todosOsProdutos.find(x => x.id === id);
+  if (!p || p.estoque <= 0) return;
+  const item = carrinho.find(i => i.id === id);
+  if (item) {
+    if (item.qtd >= p.estoque) { toast('⚠️ Quantidade máxima atingida!'); return; }
+    item.qtd++;
+  } else {
+    carrinho.push({ id:p.id, nome:p.nome, preco:p.preco, custo:p.custo||0, imagem:p.imagem, qtd:1, estoqueMax:p.estoque });
+  }
+  updateCartUI();
+  toast('✅ ' + p.nome + ' adicionado!', 'success');
+}
+
+function removeFromCart(id) { carrinho = carrinho.filter(i => i.id !== id); updateCartUI(); }
+
+function changeQtd(id, delta) {
+  const item = carrinho.find(i => i.id === id);
+  if (!item) return;
+  item.qtd += delta;
+  if (item.qtd <= 0) removeFromCart(id);
+  else if (item.qtd > item.estoqueMax) { item.qtd = item.estoqueMax; toast('⚠️ Estoque máximo!'); }
+  else updateCartUI();
+}
+
+function updateCartUI() {
+  const total = carrinho.reduce((s,i) => s + i.preco * i.qtd, 0);
+  const count = carrinho.reduce((s,i) => s + i.qtd, 0);
+  document.getElementById('cartCount').textContent = count;
+  document.getElementById('cartTotal').textContent = fmt(total);
+  const container = document.getElementById('cartItems');
+  if (!carrinho.length) { container.innerHTML = `<div class="cart-empty"><div class="icon">🛒</div><p>Seu carrinho está vazio</p></div>`; return; }
+  container.innerHTML = carrinho.map(i => `
+    <div class="cart-item">
+      <img src="${i.imagem||'https://via.placeholder.com/60x60/fce4ec/e91e8c?text=P'}" alt="${i.nome}" onerror="this.src='https://via.placeholder.com/60x60/fce4ec/e91e8c?text=P'">
+      <div class="cart-item-info">
+        <h4>${i.nome}</h4>
+        <div class="item-preco">${fmt(i.preco * i.qtd)}</div>
+        <div class="cart-item-qtd">
+          <button class="qtd-btn" onclick="changeQtd('${i.id}',-1)">−</button>
+          <span class="qtd-num">${i.qtd}</span>
+          <button class="qtd-btn" onclick="changeQtd('${i.id}',1)">+</button>
+        </div>
+      </div>
+      <button class="cart-item-remove" onclick="removeFromCart('${i.id}')">🗑️</button>
+    </div>`).join('');
+}
+
+function toggleCart() {
+  document.getElementById('cartPanel').classList.toggle('open');
+  document.getElementById('cartOverlay').classList.toggle('open');
+}
+
+// ============================================================
+// FINALIZAR PEDIDO → WHATSAPP
+// ============================================================
+async function finalizarPedido() {
+  if (!carrinho.length) { toast('⚠️ Adicione produtos ao carrinho!'); return; }
+  const nome = document.getElementById('clienteNome').value.trim();
+  const tel = document.getElementById('clienteTel').value.trim();
+  const forma = document.getElementById('formaPag').value;
+  const obs = document.getElementById('obsCliente').value.trim();
+  if (!nome) { toast('⚠️ Informe seu nome!'); document.getElementById('clienteNome').focus(); return; }
+  if (!tel) { toast('⚠️ Informe seu WhatsApp!'); document.getElementById('clienteTel').focus(); return; }
+
+  const total = carrinho.reduce((s,i) => s + i.preco * i.qtd, 0);
+  const totalCusto = carrinho.reduce((s,i) => s + (i.custo||0) * i.qtd, 0);
+
+  try {
+    await db.collection('pedidos').add({
+      cliente: nome, telefone: tel.replace(/\D/g,''),
+      itens: carrinho.map(i => ({ produtoId:i.id, nome:i.nome, preco:i.preco, custo:i.custo||0, qtd:i.qtd })),
+      total, totalCusto, formaPagamento: forma, observacoes: obs, status: 'pendente',
+      data: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    for (const i of carrinho) {
+      const p = todosOsProdutos.find(x => x.id === i.id);
+      if (p) { await db.collection('produtos').doc(i.id).update({ estoque: Math.max(0, p.estoque - i.qtd) }); p.estoque = Math.max(0, p.estoque - i.qtd); }
+    }
+  } catch(e) { console.error('Erro ao salvar pedido:', e); }
+
+  const formaLabel = { pix:'PIX 💸', cartao:'Cartão 💳', dinheiro:'Dinheiro 💵', a_combinar:'A combinar 🤝' };
+  const itensMsg = carrinho.map(i => `  • ${i.qtd}x ${i.nome} — ${fmt(i.preco * i.qtd)}`).join('\n');
+  const msg = `${configLoja.mensagemPedido || 'Olá Sara! Gostaria de fazer um pedido:'}\n\n` +
+    `👤 *Nome:* ${nome}\n📱 *WhatsApp:* ${tel}\n\n` +
+    `🛍️ *Itens do Pedido:*\n${itensMsg}\n\n` +
+    `💰 *Total: ${fmt(total)}*\n💳 *Pagamento:* ${formaLabel[forma]||forma}\n` +
+    (obs ? `📝 *Obs:* ${obs}\n` : '');
+
+  window.open(`https://wa.me/${configLoja.whatsapp||'5527995030142'}?text=${encodeURIComponent(msg)}`, '_blank');
+  carrinho = []; updateCartUI();
+  document.getElementById('clienteNome').value = '';
+  document.getElementById('clienteTel').value = '';
+  document.getElementById('obsCliente').value = '';
+  toggleCart();
+  toast('🎉 Pedido enviado pelo WhatsApp!', 'success');
+  renderProdutos();
+}
+
+document.getElementById('modalProduto').addEventListener('click', function(e) { if (e.target === this) fecharModal(); });
+</script>
+</body>
+</html>
