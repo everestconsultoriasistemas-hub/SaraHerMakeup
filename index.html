@@ -291,23 +291,11 @@ function fecharModal() {
 // INIT FIREBASE
 // ============================================================
 async function iniciarLoja() {
-  // Tentar config salva
-  const savedCfg = LocalConfig.get();
-  if (savedCfg && initFirebase(savedCfg)) {
+  // Conectar automaticamente com as credenciais da Sara
+  if (autoInit()) {
     await carregarLoja();
   } else {
-    // Tentar config padrão embutida (preenchida pelo admin)
-    const defaultCfg = window.LOJA_FIREBASE_CONFIG;
-    if (defaultCfg && defaultCfg.projectId && defaultCfg.projectId !== 'SEU_PROJECT_ID') {
-      if (initFirebase(defaultCfg)) {
-        LocalConfig.save(defaultCfg);
-        await carregarLoja();
-      } else {
-        mostrarSetup();
-      }
-    } else {
-      mostrarSetup();
-    }
+    mostrarSetup();
   }
 }
 

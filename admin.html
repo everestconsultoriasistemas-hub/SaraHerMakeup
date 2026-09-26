@@ -534,11 +534,10 @@ function reconfigurarFirebase() {
 // INIT
 // ============================================================
 window.addEventListener('DOMContentLoaded', () => {
-  const savedCfg = LocalConfig.get();
-  if (savedCfg && initFirebase(savedCfg)) {
+  // Conectar automaticamente com as credenciais da Sara
+  if (autoInit()) {
     document.getElementById('setupScreen').style.display = 'none';
     document.getElementById('loginScreen').style.display = 'flex';
-    // Verificar se já está logado
     auth.onAuthStateChanged(user => {
       if (user) mostrarApp();
     });

@@ -3,18 +3,18 @@
 // Sara Her Makeup - Sistema de Gestão
 // ============================================================
 
-// Configuração Firebase - será preenchida pelo usuário
+// Configuração Firebase - Sara Her Makeup
 const FIREBASE_CONFIG = {
-  apiKey: window.FIREBASE_API_KEY || "SUA_API_KEY",
-  authDomain: window.FIREBASE_AUTH_DOMAIN || "SEU_PROJECT.firebaseapp.com",
-  projectId: window.FIREBASE_PROJECT_ID || "SEU_PROJECT_ID",
-  storageBucket: window.FIREBASE_STORAGE_BUCKET || "SEU_PROJECT.appspot.com",
-  messagingSenderId: window.FIREBASE_MESSAGING_SENDER_ID || "SEU_SENDER_ID",
-  appId: window.FIREBASE_APP_ID || "SEU_APP_ID"
+  apiKey: "AIzaSyCSGSZmVxW4b09jBHUzbfTB52EUGtDRfM4",
+  authDomain: "sara-her-makeup.firebaseapp.com",
+  projectId: "sara-her-makeup",
+  storageBucket: "sara-her-makeup.firebasestorage.app",
+  messagingSenderId: "1071934776127",
+  appId: "1:1071934776127:web:209177db9079e16da4a98a"
 };
 
 // Inicializar Firebase
-let db, auth, app;
+let db, auth;
 
 function initFirebase(config) {
   try {
@@ -23,9 +23,7 @@ function initFirebase(config) {
       return false;
     }
     if (!firebase.apps.length) {
-      app = firebase.initializeApp(config || FIREBASE_CONFIG);
-    } else {
-      app = firebase.apps[0];
+      firebase.initializeApp(config || FIREBASE_CONFIG);
     }
     db = firebase.firestore();
     auth = firebase.auth();
@@ -36,8 +34,13 @@ function initFirebase(config) {
   }
 }
 
+// Inicializar automaticamente com as credenciais da Sara
+function autoInit() {
+  return initFirebase(FIREBASE_CONFIG);
+}
+
 // ============================================================
-// CONFIG LOCAL (para guardar configurações do Firebase)
+// CONFIG LOCAL
 // ============================================================
 const LocalConfig = {
   get() {
@@ -195,26 +198,29 @@ const DB = {
       const saidas = caixa.filter(m => m.tipo === 'saida').reduce((s, m) => s + (m.valor || 0), 0);
 
       return { totalVendas, totalCusto, lucro, margem, entradas, saidas, saldo: entradas - saidas, pedidos, caixa };
-    } catch (e) { console.error(e); return { totalVendas:0, totalCusto:0, lucro:0, margem:0, entradas:0, saidas:0, saldo:0, pedidos:[], caixa:[] }; }
+    } catch (e) {
+      console.error(e);
+      return { totalVendas:0, totalCusto:0, lucro:0, margem:0, entradas:0, saidas:0, saldo:0, pedidos:[], caixa:[] };
+    }
   },
 
   // ---- DADOS DEMO ----
   async initDemoData() {
     try {
       const snap = await db.collection('produtos').limit(1).get();
-      if (!snap.empty) return; // já tem dados
+      if (!snap.empty) return;
 
       const demos = [
         { nome: 'Batom Matte Vermelho', categoria: 'Batom', custo: 12.00, preco: 35.00, estoque: 20, estoqueMin: 5, descricao: 'Batom matte de longa duração, cor vermelho intenso', imagem: 'https://images.unsplash.com/photo-1586495777744-4e6232bf2f9b?w=400&q=80', ativo: true },
         { nome: 'Base Líquida FPS 30', categoria: 'Base', custo: 25.00, preco: 69.90, estoque: 15, estoqueMin: 3, descricao: 'Base líquida com proteção solar, cobertura média a alta', imagem: 'https://images.unsplash.com/photo-1631214524020-3c69b3b0e5e5?w=400&q=80', ativo: true },
         { nome: 'Paleta de Sombras 12 Cores', categoria: 'Sombra', custo: 18.00, preco: 55.00, estoque: 10, estoqueMin: 2, descricao: 'Paleta com 12 cores vibrantes, acabamento matte e shimmer', imagem: 'https://images.unsplash.com/photo-1512496015851-a90fb38ba796?w=400&q=80', ativo: true },
         { nome: 'Máscara de Cílios Volume', categoria: 'Olhos', custo: 8.00, preco: 28.00, estoque: 25, estoqueMin: 5, descricao: 'Máscara de cílios para volume e alongamento', imagem: 'https://images.unsplash.com/photo-1583241800698-e8ab01830a22?w=400&q=80', ativo: true },
-        { nome: 'Blush Rosé', categoria: 'Blush', custo: 10.00, preco: 32.00, estoque: 3, estoqueMin: 5, descricao: 'Blush em pó com cor rosé natural', imagem: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&q=80', ativo: true },
+        { nome: 'Blush Rosé', categoria: 'Blush', custo: 10.00, preco: 32.00, estoque: 8, estoqueMin: 3, descricao: 'Blush em pó com cor rosé natural', imagem: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&q=80', ativo: true },
         { nome: 'Iluminador Dourado', categoria: 'Iluminador', custo: 14.00, preco: 42.00, estoque: 8, estoqueMin: 3, descricao: 'Iluminador em pó com reflexo dourado', imagem: 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=400&q=80', ativo: true },
       ];
 
       for (const p of demos) await this.addProduto(p);
-      console.log('Dados demo inseridos!');
+      console.log('✅ Dados demo inseridos com sucesso!');
     } catch (e) { console.error('Erro ao inserir demo:', e); }
   }
 };
